@@ -52,51 +52,6 @@ export function VenuePage({ onNavigate }: VenuePageProps) {
     }
   ];
 
-  const hotels = [
-    {
-      name: "The Chancery Pavilion",
-      category: "5-Star",
-      distance: "1.5 km",
-      price: "₹6,500 - 8,500",
-      features: ["Free WiFi", "Breakfast", "Pool", "Conference Rate Available"]
-    },
-    {
-      name: "Ramada Bangalore",
-      category: "4-Star",
-      distance: "2 km",
-      price: "₹4,500 - 6,000",
-      features: ["Free WiFi", "Breakfast", "Gym", "Special Rate"]
-    },
-    {
-      name: "Lemon Tree Hotel",
-      category: "4-Star",
-      distance: "1 km",
-      price: "₹3,500 - 5,000",
-      features: ["Free WiFi", "Breakfast", "Conference Rate"]
-    },
-    {
-      name: "Fairfield by Marriott",
-      category: "4-Star",
-      distance: "3 km",
-      price: "₹5,000 - 7,000",
-      features: ["Free WiFi", "Breakfast", "Pool", "Gym"]
-    },
-    {
-      name: "Comfort Inn",
-      category: "3-Star",
-      distance: "1.5 km",
-      price: "₹2,500 - 3,500",
-      features: ["Free WiFi", "Breakfast", "Budget Friendly"]
-    },
-    {
-      name: "Treebo Hotels",
-      category: "3-Star",
-      distance: "800 m",
-      price: "₹2,000 - 3,000",
-      features: ["Free WiFi", "Breakfast", "Walking Distance"]
-    }
-  ];
-
   const nearbyAttractions = [
     {
       name: "Lalbagh Botanical Garden",
@@ -249,60 +204,6 @@ export function VenuePage({ onNavigate }: VenuePageProps) {
                   </ul>
                 </motion.div>
               ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Accommodation */}
-      <section className="py-24 bg-gradient-to-b from-white to-[#F8FAFC]">
-        <div className="max-w-[1280px] mx-auto px-16">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-[#0B1F3A] text-[48px] font-['Montserrat',sans-serif] font-bold mb-4 text-center">
-              Recommended <span className="text-[#F97316]">Hotels</span>
-            </h2>
-            <p className="text-[#475569] text-[18px] text-center mb-12">
-              Special conference rates available at partner hotels. Mention conference code when booking.
-            </p>
-
-            <div className="grid grid-cols-3 gap-6">
-              {hotels.map((hotel, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -8, scale: 1.03 }}
-                  className="bg-white rounded-xl p-6 shadow-lg border-2 border-[#E2E8F0] hover:border-[#F97316] hover:shadow-2xl transition-all duration-300"
-                >
-                  <div className="bg-gradient-to-r from-[#0B1F3A] to-[#1E4ED8] text-white px-3 py-1 rounded-full inline-block mb-4">
-                    <p className="text-[12px] font-semibold">{hotel.category}</p>
-                  </div>
-                  <h3 className="text-[#0B1F3A] text-[20px] font-['Montserrat',sans-serif] font-bold mb-2">
-                    {hotel.name}
-                  </h3>
-                  <p className="text-[#475569] text-[14px] mb-4">📍 {hotel.distance} from venue</p>
-                  <p className="text-[#1E4ED8] text-[20px] font-bold mb-4">{hotel.price}<span className="text-[14px] font-normal text-[#475569]">/night</span></p>
-                  <div className="space-y-2">
-                    {hotel.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className="flex items-center gap-2">
-                        <span className="text-[#F97316]">✓</span>
-                        <span className="text-[#0F172A] text-[14px]">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-
-            <div className="mt-8 bg-[#FFF7ED] border-l-4 border-[#F97316] rounded-lg p-6">
-              <p className="text-[#0F172A] text-[16px]">
-                <strong>Note:</strong> Please mention "BNMIT Conference 2026" when booking to avail special rates. Book early as rooms are limited during conference dates.
-              </p>
             </div>
           </motion.div>
         </div>
