@@ -4,6 +4,8 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { supabase } from "@/lib/supabase";
+
 
 interface RegistrationPageProps {
   onNavigate: (page: string) => void;
@@ -70,6 +72,7 @@ interface TouchedFields {
 }
 
 export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
+<<<<<<< HEAD
   const [formData, setFormData] = useState({
     name: "",
     nationality: "",
@@ -94,6 +97,201 @@ export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
 
   const formRef = useRef<HTMLFormElement>(null);
   const fieldRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+=======
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [isSendingLink, setIsSendingLink] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+
+  // Initialize from localStorage if available
+  const [currentStep, setCurrentStep] = useState(() => {
+    const saved = localStorage.getItem('registrationStep');
+    return saved ? parseInt(saved) : 1;
+  });
+
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('registrationFormData');
+    return saved ? JSON.parse(saved) : {
+      registrationType: "",
+      participantType: "",
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      institution: "",
+      country: "",
+      paperTitle: "",
+      trackNumber: "",
+      dietaryRequirements: "",
+      accommodation: false
+    };
+  });
+
+  // Check for auth errors in URL on mount
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const error = hashParams.get('error');
+    const errorDescription = hashParams.get('error_description');
+    
+    if (error) {
+      let errorMessage = 'Authentication failed. ';
+      
+      if (error === 'access_denied' && errorDescription?.includes('expired')) {
+        errorMessage = 'Email verification link has expired. Please request a new one.';
+      } else if (errorDescription) {
+        errorMessage += errorDescription.replace(/\+/g, ' ');
+      }
+      
+      setAuthError(errorMessage);
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+
+  // Listen for auth state changes
+  useEffect(() => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        setEmailVerified(true);
+        setAuthError(null);
+        
+        // Store email verification status
+        localStorage.setItem('emailVerified', 'true');
+        localStorage.setItem('verifiedEmail', session.user.email || '');
+        
+        // Show welcome back message if there's saved progress
+        const savedStep = localStorage.getItem('registrationStep');
+        if (savedStep && parseInt(savedStep) > 1) {
+          setShowWelcomeBack(true);
+          setTimeout(() => setShowWelcomeBack(false), 5000);
+        }
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Check existing session on mount
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session?.user) {
+        setEmailVerified(true);
+        localStorage.setItem('emailVerified', 'true');
+        localStorage.setItem('verifiedEmail', data.session.user.email || '');
+      }
+    });
+
+    // Check if email was previously verified
+    const wasVerified = localStorage.getItem('emailVerified') === 'true';
+    const verifiedEmail = localStorage.getItem('verifiedEmail');
+    
+    if (wasVerified && verifiedEmail && verifiedEmail === formData.email) {
+      setEmailVerified(true);
+    }
+  }, [formData.email]);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('registrationFormData', JSON.stringify(formData));
+  }, [formData]);
+
+  // Save current step to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('registrationStep', currentStep.toString());
+  }, [currentStep]);
+
+const sendMagicLink = async () => {
+  if (!formData.email) {
+    alert("Please enter your email first.");
+    return;
+  }
+
+  try {
+    setIsSendingLink(true);
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email: formData.email,
+      options: {
+        emailRedirectTo: window.location.origin + "./"
+      }
+    });
+
+    if (error) throw error;
+
+    alert("Verification link sent! Please check your email.");
+  } catch (err) {
+    console.error(err);
+    alert("Failed to send verification email.");
+  } finally {
+    setIsSendingLink(false);
+  }
+};
+
+  
+  const submitRegistration = async () => {
+  // Basic required field validation
+  if (
+    !formData.registrationType ||
+    !formData.participantType ||
+    !formData.firstName ||
+    !formData.lastName ||
+    !formData.email ||
+    !formData.phone ||
+    !formData.institution ||
+    !formData.country
+  ) {
+    alert("Please fill all required fields.");
+    return;
+  }
+
+  // Author-specific validation
+  if (
+    formData.registrationType === "author" &&
+    (!formData.paperTitle || !formData.trackNumber)
+  ) {
+    alert("Paper title and track are required for authors.");
+    return;
+  }
+
+  try {
+    const { error } = await supabase
+      .from("conference_registrations")
+      .insert([
+        {
+          registration_type: formData.registrationType,
+          participant_type: formData.participantType,
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          institution: formData.institution,
+          country: formData.country,
+          paper_title:
+            formData.registrationType === "author"
+              ? formData.paperTitle
+              : null,
+          track_number:
+            formData.registrationType === "author"
+              ? formData.trackNumber
+              : null,
+          dietary_requirements: formData.dietaryRequirements,
+          accommodation: formData.accommodation,
+          payment_status: "pending"
+        }
+      ]);
+
+    if (error) throw error;
+
+    // ✅ Success → move to payment page
+    onNavigate("payment");
+  } catch (err) {
+    console.error(err);
+    alert("Registration failed. Please try again.");
+  }
+};
+>>>>>>> d8d9962665b5be0570078128bc4ae96cca23f498
 
   const contentRef = useRef(null);
   const isInView = useInView(contentRef, { once: true, amount: 0.2 });
@@ -122,6 +320,7 @@ export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
     }
   ];
 
+<<<<<<< HEAD
   const feeOptions = [
     { value: "800", label: "Student (Indian) - Early Bird: ₹800" },
     { value: "1200", label: "Student (Indian) - Regular: ₹1,200" },
@@ -136,6 +335,20 @@ export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
     { value: "120", label: "Industry/Practitioner (International) - Early Bird: $120" },
     { value: "150", label: "Industry/Practitioner (International) - Regular: $150" }
   ];
+=======
+  
+  const handleNext = () => {
+    if (currentStep === 2 && !emailVerified) {
+    alert("Please verify your email before continuing.");
+    return;
+    }
+    if (currentStep < 4) setCurrentStep(currentStep + 1);
+  };
+
+  const handlePrevious = () => {
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
+  };
+>>>>>>> d8d9962665b5be0570078128bc4ae96cca23f498
 
   const handleInputChange = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
@@ -776,7 +989,77 @@ export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
                     <ErrorMessage field="placeOfAffiliation" />
                   </div>
                 </div>
+<<<<<<< HEAD
               </div>
+=======
+                <div className="space-y-2">
+                  <Label htmlFor="email">Email Address *</Label>
+
+                  <Input
+                    id="email"
+                    type="email"
+                    value={formData.email}
+                    disabled={emailVerified}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
+                    placeholder="your.email@example.com"
+                    className="h-12"
+                  />
+
+                  {!emailVerified ? (
+                    <button
+                      type="button"
+                      onClick={sendMagicLink}
+                      disabled={isSendingLink}
+                      className="text-sm text-[#1E4ED8] font-semibold hover:underline"
+                    >
+                      {isSendingLink ? "Sending verification link..." : "Verify email"}
+                    </button>
+                  ) : (
+                    <p className="text-green-600 text-sm font-semibold">
+                      ✓ Email verified
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number *</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    placeholder="+91 XXXXX XXXXX"
+                    className="h-12"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="institution">Institution/Organization *</Label>
+                  <Input
+                    id="institution"
+                    value={formData.institution}
+                    onChange={(e) => handleInputChange("institution", e.target.value)}
+                    placeholder="Your institution name"
+                    className="h-12"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="country">Country *</Label>
+                  <Select value={formData.country} onValueChange={(value: string) => handleInputChange("country", value)}>
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="india">India</SelectItem>
+                      <SelectItem value="usa">United States</SelectItem>
+                      <SelectItem value="uk">United Kingdom</SelectItem>
+                      <SelectItem value="singapore">Singapore</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </motion.div>
+            )}
+>>>>>>> d8d9962665b5be0570078128bc4ae96cca23f498
 
               {/* Paper Details Section */}
               <div className="border-b border-[#E2E8F0] pb-5">
@@ -959,7 +1242,19 @@ export function RegistrationPage({ onNavigate }: RegistrationPageProps) {
                   By submitting, you agree to our terms and conditions. We will verify your payment and send confirmation to your email.
                 </p>
               </div>
+<<<<<<< HEAD
             </form>
+=======
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={currentStep === 4 ? submitRegistration : handleNext}
+                className="bg-[#F97316] text-white px-8 py-3 rounded-lg font-semibold text-[16px] hover:bg-[#ea580c] transition-colors shadow-lg"
+              >
+                {currentStep === 4 ? "Proceed to Payment" : "Next"}
+              </motion.button>
+            </div>
+>>>>>>> d8d9962665b5be0570078128bc4ae96cca23f498
           </motion.div>
         </div>
       </motion.section>
