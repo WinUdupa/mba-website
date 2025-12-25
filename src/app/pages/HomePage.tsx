@@ -16,7 +16,6 @@ const conferenceInfo = {
   dates: "April 9-11, 2026",
   preConference: "Pre-Conference Workshop: April 8, 2026",
   venue: "BNM Institute of Technology, Bengaluru",
-  mode: "Hybrid Mode (In-Person & Virtual)",
 };
 
 const importantDates = [
@@ -90,10 +89,10 @@ const researchTracks = [
 ];
 
 const stats = [
-  { number: "50+", label: "Expert Speakers" },
-  { number: "500+", label: "Expected Delegates" },
+  { number: "10+", label: "Expert Speakers" },
+  { number: "200+", label: "Expected Delegates" },
   { number: "6", label: "Research Tracks" },
-  { number: "3", label: "Conference Days" },
+  { number: "2", label: "Conference Days" },
 ];
 
 // Floating geometric shapes component
@@ -274,7 +273,6 @@ const aboutContent = {
         { label: "Conference Dates", value: "April 9–11, 2026" },
         { label: "Pre-Conference", value: "April 8, 2026" },
         { label: "Venue", value: "BNMIT, Bengaluru" },
-        { label: "Format", value: "Hybrid" },
       ]
     }
   },
@@ -385,7 +383,7 @@ function AboutSection() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            transition={{ duration: 0.2 }}
           >
             {/* Desktop: Two-column layout */}
             <div className="hidden lg:grid lg:grid-cols-3 gap-12">
@@ -683,10 +681,10 @@ const submissionGuidelinesData = [
         "Include figures, tables, graphs, appendices, and references using standard citation formats.",
         "Submit as a single PDF document (.pdf format only).",
         "Maximum of 3 submissions per participant allowed.",
-        "Only one author or co-author may present a paper (Hybrid Mode) at the conference.",
+        "Only one author or co-author may present a paper at the conference.",
         "Certificates for co-authors (not registered) will be provided upon payment of ₹500 per co-author."
       ],
-      note: "All submissions should be emailed to: icsar2026@bnmit.ac.in"
+      note: "All submissions should be emailed to: bnmitconference@bnmit.in"
     }
   },
   {
@@ -960,13 +958,14 @@ function SubmissionGuidelinesSection() {
 
         {/* Submit Button */}
         <div className="text-center mt-10">
-          <a
-            href="mailto:icsar2026@bnmit.ac.in"
+          <button
+            type="button"
+            onClick={() => onNavigate && onNavigate("registration")}
             className="inline-flex items-center gap-2 px-6 py-3.5 bg-[#000066] text-white text-[14px] md:text-[15px] font-semibold rounded-lg hover:bg-[#000055] transition-colors duration-200"
           >
             <Mail className="w-4 h-4" />
             Submit Your Paper
-          </a>
+          </button>
         </div>
       </div>
     </section>
@@ -1029,11 +1028,6 @@ export default function HomePage({ onNavigate }: HomePageProps) {
               <span className="flex items-center gap-2">
                 <MapPin className="w-5 h-5 text-[#f7931e]" />
                 BNMIT, Bengaluru
-              </span>
-              <span className="text-white/40">|</span>
-              <span className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-[#f7931e]" />
-                Hybrid
               </span>
             </div>
 
@@ -1098,7 +1092,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                     initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-60px" }}
-                    transition={{ duration: 0.4, ease: "easeOut", delay: index * 0.08 }}
+                    transition={{ duration: 0.4, delay: index * 0.08 }}
                     className={`relative flex ${isLeft ? 'justify-start' : 'justify-end'}`}
                   >
                     {/* Timeline dot */}
@@ -1156,7 +1150,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
-                  transition={{ duration: 0.35, ease: "easeOut", delay: index * 0.06 }}
+                  transition={{ duration: 0.35, delay: index * 0.06 }}
                   className="relative"
                 >
                   {/* Timeline dot */}
@@ -1233,7 +1227,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                transition={{ duration: 0.4 }}
                 className="group"
               >
                 <div 
@@ -1272,7 +1266,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.4, ease: "easeOut", delay: 0.08 }}
+                transition={{ duration: 0.4, delay: 0.08 }}
                 className="group"
               >
                 <div 
@@ -1314,7 +1308,7 @@ export default function HomePage({ onNavigate }: HomePageProps) {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.4, ease: "easeOut", delay: 0.16 }}
+                transition={{ duration: 0.4, delay: 0.16 }}
                 className="group"
               >
                 <div 

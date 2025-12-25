@@ -49,7 +49,7 @@ export function ContactPage({ onNavigate }: ContactPageProps) {
     },
     {
       question: "What accommodation options are available?",
-      answer: "We have partnered with several nearby hotels offering special conference rates. Details will be provided upon registration. Bangalore has numerous accommodation options to suit all budgets."
+      answer: "The authors should manage on their own. The Institution would share the information."
     }
   ];
 
