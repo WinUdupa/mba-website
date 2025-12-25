@@ -287,16 +287,6 @@ export function AboutConferencePage({ onNavigate }: AboutConferencePageProps) {
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-4">
-                      <div className="w-11 h-11 rounded-xl bg-[#8B5CF6]/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-xl">💻</span>
-                      </div>
-                      <div>
-                        <p className="text-[#64748B] text-[13px] font-medium uppercase tracking-wide mb-1">Format</p>
-                        <p className="text-[#0B1F3A] text-[16px] font-bold">Hybrid Mode</p>
-                        <p className="text-[#64748B] text-[13px]">In-person & Virtual</p>
-                      </div>
-                    </div>
                   </div>
 
                   <div className="border-t border-[#E2E8F0] my-6"></div>

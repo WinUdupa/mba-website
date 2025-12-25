@@ -12,7 +12,7 @@ export function SubmissionPage({ onNavigate }: SubmissionPageProps) {
 
   const fadeInUp = {
     hidden: { opacity: 0, y: 40 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
   };
 
   const staggerContainer = {
@@ -63,7 +63,7 @@ export function SubmissionPage({ onNavigate }: SubmissionPageProps) {
         "Include figures, tables, graphs, appendices, and references using standard citation formats",
         "Submissions must be a single document in PDF format (.pdf)",
         "A maximum of three submissions per participant is allowed",
-        "Only one author or co-author may present a paper (Hybrid Mode) at the conference"
+        "Only one author or co-author may present a paper at the conference"
       ]
     },
     {
